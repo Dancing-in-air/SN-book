@@ -13,7 +13,7 @@ BOT_NAME = 'SnBook'
 
 SPIDER_MODULES = ['SnBook.spiders']
 NEWSPIDER_MODULE = 'SnBook.spiders'
-# LOG_LEVEL = "WARNING"
+LOG_LEVEL = "WARNING"
 COOKIES_DEBUG = True
 
 
