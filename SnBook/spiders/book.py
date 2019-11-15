@@ -44,7 +44,7 @@ class BookSpider(scrapy.Spider):
             yield scrapy.Request(item["book_url"], callback=self.parse_book, meta={"item": deepcopy(item)},
                                  dont_filter=False)
 
-        # 翻页,使用selenium模块获取下一页地址
+        # 翻页,使用selenium模块获取下一页地址,但是效率超低
         # chrome_options = webdriver.ChromeOptions()
         # chrome_options.add_argument("--headless")
         # chrome_options.add_argument("-disable-gpu")
