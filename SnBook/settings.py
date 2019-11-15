@@ -14,6 +14,7 @@ BOT_NAME = 'SnBook'
 SPIDER_MODULES = ['SnBook.spiders']
 NEWSPIDER_MODULE = 'SnBook.spiders'
 # LOG_LEVEL = "WARNING"
+COOKIES_DEBUG = True
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent

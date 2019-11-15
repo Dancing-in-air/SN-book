@@ -2,7 +2,6 @@
 import scrapy
 from SnBook.items import SnbookItem
 from copy import deepcopy
-import re
 
 
 class BookSpider(scrapy.Spider):
