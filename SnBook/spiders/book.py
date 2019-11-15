@@ -2,6 +2,8 @@
 import scrapy
 from SnBook.items import SnbookItem
 from copy import deepcopy
+from selenium import webdriver
+from lxml import etree
 
 
 class BookSpider(scrapy.Spider):
@@ -41,7 +43,20 @@ class BookSpider(scrapy.Spider):
             item["book_url"] = "https:" + li.xpath(".//a/@href").extract_first()  # 获取具体书的地址
             yield scrapy.Request(item["book_url"], callback=self.parse_book, meta={"item": deepcopy(item)},
                                  dont_filter=False)
-        # 翻页
+
+        # 翻页,使用selenium模块获取下一页地址
+        # chrome_options = webdriver.ChromeOptions()
+        # chrome_options.add_argument("--headless")
+        # chrome_options.add_argument("-disable-gpu")
+        # driver = webdriver.Chrome(chrome_options=chrome_options)
+        # driver.get(response.url)
+        # html_elements = etree.HTML(driver.page_source)
+        # url_part = html_elements.xpath("//a[@id='nextPage']/@href")  # 获取页面中的下一页部分地址
+        # if url_part:  # 判断是否为最后一页
+        #     item["next_page_url"] = "https://list.suning.com" + url_part[0]  # 获取下一页完整地址
+        #     print(item["next_page_url"])
+        #     yield scrapy.Request(item["next_page_url"], callback=self.parse_books, meta={"item": item},
+        #                          dont_filter=False)
 
     def parse_book(self, response):
         """
