@@ -45,18 +45,21 @@ class BookSpider(scrapy.Spider):
                                  dont_filter=False)
 
         # 翻页,使用selenium模块获取下一页地址,但是效率超低
-        # chrome_options = webdriver.ChromeOptions()
-        # chrome_options.add_argument("--headless")
-        # chrome_options.add_argument("-disable-gpu")
-        # driver = webdriver.Chrome(chrome_options=chrome_options)
-        # driver.get(response.url)
-        # html_elements = etree.HTML(driver.page_source)
-        # url_part = html_elements.xpath("//a[@id='nextPage']/@href")  # 获取页面中的下一页部分地址
-        # if url_part:  # 判断是否为最后一页
-        #     item["next_page_url"] = "https://list.suning.com" + url_part[0]  # 获取下一页完整地址
-        #     print(item["next_page_url"])
-        #     yield scrapy.Request(item["next_page_url"], callback=self.parse_books, meta={"item": item},
-        #                          dont_filter=False)
+        chrome_options = webdriver.ChromeOptions()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("-disable-gpu")
+        driver = webdriver.Chrome(chrome_options=chrome_options)
+        driver.get(response.url)
+        html_elements = etree.HTML(driver.page_source)
+        # 获取页面中的下一页部分地址
+        url_part = html_elements.xpath("//a[@id='nextPage']/@href")
+        # 判断是否为最后一页
+        if url_part:
+            # 获取下一页完整地址
+            item["next_page_url"] = "https://list.suning.com" + url_part[0]
+            print(item["next_page_url"])
+            yield scrapy.Request(item["next_page_url"], callback=self.parse_books, meta={"item": item},
+                                 dont_filter=False)
 
     def parse_book(self, response):
         """
