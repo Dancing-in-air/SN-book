@@ -28,8 +28,7 @@ class BookSpider(scrapy.Spider):
                 item["books_url"] = dd.xpath("./@href").extract_first()  # 子类下所有书籍的地址
                 if item["books_url"] is None:
                     item["books_url"] = dd.xpath(".//dt[@class='dTitle']/h3/a/@href").extract_first()
-                yield scrapy.Request(item["books_url"], callback=self.parse_books, meta={"item": deepcopy(item)},
-                                     dont_filter=False)
+                yield scrapy.Request(item["books_url"], callback=self.parse_books, meta={"item": deepcopy(item)})
 
     def parse_books(self, response):
         """
@@ -41,13 +40,16 @@ class BookSpider(scrapy.Spider):
         li_list = response.xpath("//ul[@class='clearfix']/li")
         for li in li_list:
             item["book_url"] = "https:" + li.xpath(".//a/@href").extract_first()  # 获取具体书的地址
-            yield scrapy.Request(item["book_url"], callback=self.parse_book, meta={"item": deepcopy(item)},
-                                 dont_filter=False)
+            yield scrapy.Request(item["book_url"], callback=self.parse_book, meta={"item": deepcopy(item)})
 
         # 翻页,使用selenium模块获取下一页地址,但是效率超低
+        # 设置无界面浏览
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument("--headless")
-        chrome_options.add_argument("-disable-gpu")
+        chrome_options.add_argument("--disable-gpu")
+        # 禁止图片和css加载
+        prefs = {"profile.managed_default_content_settings.images": 2, 'permissions.default.stylesheet': 2}
+        chrome_options.add_experimental_option("prefs", prefs)
         driver = webdriver.Chrome(chrome_options=chrome_options)
         driver.get(response.url)
         html_elements = etree.HTML(driver.page_source)
@@ -58,8 +60,7 @@ class BookSpider(scrapy.Spider):
             # 获取下一页完整地址
             item["next_page_url"] = "https://list.suning.com" + url_part[0]
             print(item["next_page_url"])
-            yield scrapy.Request(item["next_page_url"], callback=self.parse_books, meta={"item": item},
-                                 dont_filter=False)
+            yield scrapy.Request(item["next_page_url"], callback=self.parse_books, meta={"item": item})
 
     def parse_book(self, response):
         """
